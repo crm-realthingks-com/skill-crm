@@ -1,12 +1,16 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Calendar } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Download, Calendar, BarChart3, TrendingUp, Users, Target } from "lucide-react";
 import { useReportsData } from "./hooks/useReportsData";
 import { ReportCategoryCard } from "./components/ReportCategoryCard";
+import { SkillsGapAnalysis } from "./components/SkillsGapAnalysis";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Reports = () => {
+  const [activeTab, setActiveTab] = useState("overview");
   const { 
     loading, 
     dashboardStats, 
@@ -54,6 +58,29 @@ const Reports = () => {
           Export Data
         </Button>
       </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="skills-gap">
+            <BarChart3 className="mr-2 h-4 w-4" />
+            Skills Gap
+          </TabsTrigger>
+          <TabsTrigger value="proficiency">
+            <TrendingUp className="mr-2 h-4 w-4" />
+            Proficiency
+          </TabsTrigger>
+          <TabsTrigger value="team">
+            <Users className="mr-2 h-4 w-4" />
+            Team Performance
+          </TabsTrigger>
+          <TabsTrigger value="projects">
+            <Target className="mr-2 h-4 w-4" />
+            Projects
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
 
       {/* Quick Stats */}
       <div className="grid gap-4 md:grid-cols-4">
@@ -160,6 +187,39 @@ const Reports = () => {
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="skills-gap">
+          <SkillsGapAnalysis />
+        </TabsContent>
+
+        <TabsContent value="proficiency">
+          <Card>
+            <CardHeader>
+              <CardTitle>Proficiency Trends</CardTitle>
+              <CardDescription>Coming soon - Track skill proficiency changes over time</CardDescription>
+            </CardHeader>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="team">
+          <Card>
+            <CardHeader>
+              <CardTitle>Team Performance</CardTitle>
+              <CardDescription>Coming soon - Analyze team productivity and performance metrics</CardDescription>
+            </CardHeader>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="projects">
+          <Card>
+            <CardHeader>
+              <CardTitle>Project Insights</CardTitle>
+              <CardDescription>Coming soon - Project-based reporting and analysis</CardDescription>
+            </CardHeader>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
