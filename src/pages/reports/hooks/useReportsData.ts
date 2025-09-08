@@ -181,36 +181,7 @@ export const useReportsData = () => {
     }
   ];
 
-  const recentReports = [
-    {
-      name: "Q4 Skills Assessment",
-      type: "Skills Analytics",
-      generatedBy: "John Doe",
-      date: "2024-01-15",
-      status: "Ready" as const
-    },
-    {
-      name: "Team Performance Review",
-      type: "Team Performance", 
-      generatedBy: "Jane Smith",
-      date: "2024-01-14",
-      status: "Ready" as const
-    },
-    {
-      name: "Training ROI Analysis",
-      type: "Project Insights",
-      generatedBy: "Mike Johnson",
-      date: "2024-01-13",
-      status: "Processing" as const
-    },
-    {
-      name: "Compliance Audit",
-      type: "Compliance Reports",
-      generatedBy: "Sarah Wilson",
-      date: "2024-01-12",
-      status: "Failed" as const
-    }
-  ];
+  // Remove dummy data - use actual reportLogs instead
 
   const fetchDashboardStats = async () => {
     try {
@@ -220,15 +191,20 @@ export const useReportsData = () => {
         .eq('status', 'completed');
 
       const { data: ratingsData } = await supabase
-        .from('skill_rating_history')
+        .from('employee_ratings')
+        .select('id');
+
+      // Get pending approvals count
+      const { data: pendingData } = await supabase
+        .from('employee_ratings')
         .select('id')
-        .eq('status', 'active');
+        .eq('status', 'submitted');
 
       setDashboardStats({
-        reportsGenerated: logsData?.length || 142,
-        dataPoints: ratingsData?.length || 1200,
-        activeDashboards: 8,
-        scheduledReports: 12
+        reportsGenerated: logsData?.length || 0,
+        dataPoints: ratingsData?.length || 0,
+        activeDashboards: pendingData?.length || 0,
+        scheduledReports: reportLogs.length || 0
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -326,7 +302,6 @@ export const useReportsData = () => {
     reportLogs,
     dashboardStats,
     reportCategories,
-    recentReports,
     generateReport,
     exportReport,
     setCurrentReport,

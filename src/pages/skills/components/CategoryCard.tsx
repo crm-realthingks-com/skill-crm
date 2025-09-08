@@ -92,11 +92,7 @@ export const CategoryCard = ({
         className="group"
       >
         <Card 
-<<<<<<< HEAD
-            className="relative h-48 w-full max-w-[400px] mx-auto cursor-pointer border-0 bg-gradient-to-br from-card via-card to-card/90 hover:shadow-2xl transition-all duration-300 overflow-hidden"
-=======
-          className="relative h-96 w-full max-w-[800px] mx-auto cursor-pointer border-0 bg-gradient-to-br from-card via-card to-card/90 hover:shadow-2xl transition-all duration-300 overflow-hidden"
->>>>>>> d3762a8a082edaafcba7a8f06e73a80e63e2d193
+          className="relative h-48 w-full max-w-[400px] mx-auto cursor-pointer border-0 bg-gradient-to-br from-card via-card to-card/90 hover:shadow-2xl transition-all duration-300 overflow-hidden"
           role="button"
           tabIndex={0}
           aria-label={`Open ${category.name} category`}

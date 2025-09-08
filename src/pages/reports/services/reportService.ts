@@ -75,15 +75,16 @@ export class ReportService {
 
       if (projectError) throw projectError;
 
-      // Get approved skill ratings
+      // Get approved skill ratings from employee_ratings table
       const { data: approvedRatings, error: ratingsError } = await supabase
-        .from('skill_rating_history')
+        .from('employee_ratings')
         .select(`
           user_id,
           skill_id,
           subskill_id,
           rating,
           created_at,
+          approved_at,
           skills (
             name,
             skill_categories (
@@ -94,8 +95,7 @@ export class ReportService {
             name
           )
         `)
-        .eq('rating_type', 'approved')
-        .eq('status', 'active');
+        .eq('status', 'approved');
 
       if (ratingsError) throw ratingsError;
 
@@ -139,15 +139,17 @@ export class ReportService {
     const logId = await this.logReportGeneration('Skills Analytics', 'Proficiency Trends', filters);
 
     try {
-      // Get historical skill ratings
+      // Get historical skill ratings from employee_ratings table
       const { data: ratingHistory, error } = await supabase
-        .from('skill_rating_history')
+        .from('employee_ratings')
         .select(`
           user_id,
           skill_id,
-          rating_type,
           rating,
+          status,
           created_at,
+          submitted_at,
+          approved_at,
           skills (
             name,
             skill_categories (
@@ -217,12 +219,13 @@ export class ReportService {
 
       // Get approved skill ratings for team members
       const { data: skills, error: skillsError } = await supabase
-        .from('skill_rating_history')
+        .from('employee_ratings')
         .select(`
           user_id,
           skill_id,
           rating,
           created_at,
+          approved_at,
           skills (
             name,
             skill_categories (
@@ -230,8 +233,7 @@ export class ReportService {
             )
           )
         `)
-        .eq('rating_type', 'approved')
-        .eq('status', 'active');
+        .eq('status', 'approved');
 
       if (skillsError) throw skillsError;
 
@@ -317,14 +319,19 @@ export class ReportService {
     const headers = ['Employee', 'Skill', 'Self Rating', 'Approved Rating', 'Improvement', 'Date'];
     const rows: (string | number)[] = [];
 
-    // Group ratings by user and skill
+    // Group ratings by user and skill, treating submitted as self-rating and approved as final
     const ratingsMap = new Map();
     ratingHistory.forEach(rating => {
       const key = `${rating.user_id}-${rating.skill_id}`;
       if (!ratingsMap.has(key)) {
         ratingsMap.set(key, { self: [], approved: [] });
       }
-      ratingsMap.get(key)[rating.rating_type].push(rating);
+      
+      if (rating.status === 'approved') {
+        ratingsMap.get(key).approved.push(rating);
+      } else if (rating.status === 'submitted' || rating.status === 'draft') {
+        ratingsMap.get(key).self.push(rating);
+      }
     });
 
     ratingsMap.forEach((ratings, key) => {
