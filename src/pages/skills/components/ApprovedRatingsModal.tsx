@@ -93,11 +93,16 @@ export const ApprovedRatingsModal = ({
                         {rating.self_comment}
                       </div>
                     )}
-                    {rating.approver_comment && (
-                      <div className="text-xs text-blue-600 mt-1">
-                        Approver: {rating.approver_comment}
-                      </div>
-                    )}
+                     {rating.approver?.full_name && (
+                       <div className="text-xs text-blue-600 mt-1">
+                         Approver: {rating.approver.full_name}
+                       </div>
+                     )}
+                     {rating.approver_comment && (
+                       <div className="text-xs text-muted-foreground mt-1">
+                         Comment: {rating.approver_comment}
+                       </div>
+                     )}
                   </div>
                   <div className="flex items-center gap-2">
                     {getRatingIcon(rating.rating)}
