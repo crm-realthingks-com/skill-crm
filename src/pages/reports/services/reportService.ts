@@ -277,26 +277,63 @@ export class ReportService {
     profiles: any[],
     filters: ReportFilters
   ): ReportData {
-    // Process skills gap analysis logic
+    console.log('Processing skills gap data:', {
+      projectSkillsCount: projectSkills.length,
+      approvedRatingsCount: approvedRatings.length,
+      profilesCount: profiles.length,
+      filters
+    });
+
     const headers = ['Employee', 'Department', 'Skill Category', 'Skill', 'Current Rating', 'Required Rating', 'Gap'];
     const rows: (string | number)[] = [];
 
-    // Implementation logic for gap analysis
-      approvedRatings.forEach(rating => {
-        const profile = profiles.find(p => p.user_id === rating.user_id);
-        if (profile && this.matchesFilters(rating, profile, filters)) {
-          const row = [
-            profile.full_name,
-            profile.department || 'N/A',
-            rating.skills?.skill_categories?.name || 'Unknown',
-            rating.skills?.name || 'Unknown',
-            rating.rating,
-            'high', // This would come from project requirements
-            rating.rating === 'high' ? 'None' : 'Gap exists'
-          ];
-          rows.push(...row);
+    // Create chart data for visualization
+    const chartDataMap = new Map<string, number>();
+
+    // Process approved ratings to find gaps
+    approvedRatings.forEach(rating => {
+      const profile = profiles.find(p => p.user_id === rating.user_id);
+      if (profile && this.matchesFilters(rating, profile, filters)) {
+        const categoryName = rating.skills?.skill_categories?.name || 'Unknown';
+        const skillName = rating.skills?.name || 'Unknown';
+        const currentRating = rating.rating;
+        const requiredRating = 'high'; // This would come from project requirements in a real system
+        
+        // Determine if there's a gap
+        const ratingValues = { low: 1, medium: 2, high: 3 };
+        const currentValue = ratingValues[currentRating as keyof typeof ratingValues] || 0;
+        const requiredValue = ratingValues[requiredRating as keyof typeof ratingValues] || 3;
+        const hasGap = currentValue < requiredValue;
+        const gapText = hasGap ? `${requiredValue - currentValue} level${requiredValue - currentValue !== 1 ? 's' : ''}` : 'None';
+
+        const row = [
+          profile.full_name || 'Unknown',
+          profile.department || 'N/A',
+          categoryName,
+          skillName,
+          currentRating,
+          requiredRating,
+          gapText
+        ];
+        rows.push(...row);
+
+        // Count gaps by category for chart
+        if (hasGap) {
+          chartDataMap.set(categoryName, (chartDataMap.get(categoryName) || 0) + 1);
         }
-      });
+      }
+    });
+
+    // Convert chart data map to array
+    const chartData = Array.from(chartDataMap.entries()).map(([category, gap_count]) => ({
+      category,
+      gap_count
+    }));
+
+    console.log('Skills gap processing complete:', {
+      rowsGenerated: rows.length / headers.length,
+      chartDataPoints: chartData.length
+    });
 
     return {
       headers,
@@ -304,7 +341,7 @@ export class ReportService {
       charts: [{
         type: 'bar',
         title: 'Skills Gap by Category',
-        data: [],
+        data: chartData,
         xAxisKey: 'category',
         yAxisKey: 'gap_count'
       }]
@@ -316,11 +353,19 @@ export class ReportService {
     profiles: any[],
     filters: ReportFilters
   ): ReportData {
+    console.log('Processing proficiency trends:', {
+      ratingHistoryCount: ratingHistory.length,
+      profilesCount: profiles.length,
+      filters
+    });
+
     const headers = ['Employee', 'Skill', 'Self Rating', 'Approved Rating', 'Improvement', 'Date'];
     const rows: (string | number)[] = [];
 
     // Group ratings by user and skill, treating submitted as self-rating and approved as final
     const ratingsMap = new Map();
+    const chartDataMap = new Map<string, number>();
+
     ratingHistory.forEach(rating => {
       const key = `${rating.user_id}-${rating.skill_id}`;
       if (!ratingsMap.has(key)) {
@@ -343,17 +388,36 @@ export class ReportService {
         const latestSelf = ratings.self[ratings.self.length - 1];
         
         if (this.matchesFilters(latestApproved, profile, filters)) {
+          const improvement = this.calculateImprovement(ratings.approved);
+          const skillName = latestApproved.skills?.name || 'Unknown';
+          
           const row = [
-            profile.full_name,
-            latestApproved.skills?.name || 'Unknown',
+            profile.full_name || 'Unknown',
+            skillName,
             latestSelf?.rating || 'N/A',
             latestApproved.rating,
-            this.calculateImprovement(ratings.approved),
+            improvement,
             new Date(latestApproved.created_at).toLocaleDateString()
           ];
           rows.push(...row);
+
+          // Track rating trends for chart
+          const ratingValues = { low: 1, medium: 2, high: 3 };
+          const ratingValue = ratingValues[latestApproved.rating as keyof typeof ratingValues] || 0;
+          chartDataMap.set(skillName, (chartDataMap.get(skillName) || 0) + ratingValue);
         }
       }
+    });
+
+    // Convert chart data for trend visualization
+    const chartData = Array.from(chartDataMap.entries()).map(([skill, totalRating]) => ({
+      skill,
+      avg_rating: Math.round(totalRating / Math.max(1, rows.length / headers.length) * 10) / 10
+    }));
+
+    console.log('Proficiency trends processing complete:', {
+      rowsGenerated: rows.length / headers.length,
+      chartDataPoints: chartData.length
     });
 
     return {
@@ -362,9 +426,9 @@ export class ReportService {
       charts: [{
         type: 'line',
         title: 'Skill Proficiency Over Time',
-        data: [],
-        xAxisKey: 'date',
-        yAxisKey: 'rating'
+        data: chartData,
+        xAxisKey: 'skill',
+        yAxisKey: 'avg_rating'
       }]
     };
   }
@@ -375,10 +439,18 @@ export class ReportService {
     profiles: any[],
     filters: ReportFilters
   ): ReportData {
+    console.log('Processing team productivity:', {
+      assignmentsCount: assignments.length,
+      skillsCount: skills.length,
+      profilesCount: profiles.length,
+      filters
+    });
+
     const headers = ['Employee', 'Department', 'Projects Assigned', 'Skills Applied', 'Productivity Score'];
     const rows: (string | number)[] = [];
 
     const userStats = new Map();
+    const chartDataMap = new Map<string, { projects: number; skills: number; score: number }>();
     
     assignments.forEach(assignment => {
       const profile = profiles.find(p => p.user_id === assignment.user_id);
@@ -396,14 +468,42 @@ export class ReportService {
 
     userStats.forEach((stats, userId) => {
       const productivityScore = this.calculateProductivityScore(stats.projects, stats.skills);
+      const department = stats.profile.department || 'N/A';
+      
       const row = [
-        stats.profile.full_name,
-        stats.profile.department || 'N/A',
+        stats.profile.full_name || 'Unknown',
+        department,
         stats.projects,
         stats.skills,
         productivityScore
       ];
       rows.push(...row);
+
+      // Aggregate by department for chart
+      if (!chartDataMap.has(department)) {
+        chartDataMap.set(department, { projects: 0, skills: 0, score: 0 });
+      }
+      const deptData = chartDataMap.get(department)!;
+      deptData.projects += stats.projects;
+      deptData.skills += stats.skills;
+      deptData.score += productivityScore;
+    });
+
+    // Calculate department averages for chart
+    const chartData = Array.from(chartDataMap.entries()).map(([department, data]) => {
+      const employeeCount = Array.from(userStats.values()).filter(
+        stats => (stats.profile.department || 'N/A') === department
+      ).length;
+      
+      return {
+        department,
+        avg_productivity: Math.round((data.score / Math.max(1, employeeCount)) * 10) / 10
+      };
+    });
+
+    console.log('Team productivity processing complete:', {
+      rowsGenerated: rows.length / headers.length,
+      chartDataPoints: chartData.length
     });
 
     return {
@@ -412,9 +512,9 @@ export class ReportService {
       charts: [{
         type: 'bar',
         title: 'Team Productivity by Department',
-        data: [],
+        data: chartData,
         xAxisKey: 'department',
-        yAxisKey: 'productivity'
+        yAxisKey: 'avg_productivity'
       }]
     };
   }

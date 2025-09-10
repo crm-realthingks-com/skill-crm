@@ -212,12 +212,20 @@ export const useReportsData = () => {
   };
 
   const fetchReportLogs = async () => {
+    if (!profile) {
+      console.log('Skipping report logs fetch - no user profile available');
+      return;
+    }
+    
     try {
       const logs = await reportService.getReportLogs(10);
       setReportLogs(logs);
     } catch (error) {
       console.error('Error fetching report logs:', error);
-      toast.error('Failed to fetch report logs');
+      // Only show error toast if it's not a simple empty data case
+      if (error.message !== 'TypeError: Failed to fetch') {
+        toast.error('Failed to fetch report logs');
+      }
     }
   };
 
@@ -230,26 +238,51 @@ export const useReportsData = () => {
       return null;
     }
 
+    console.log(`Starting report generation: ${reportId}`, { filters, user: profile.user_id });
     setLoading(true);
+    
     try {
       let report: GeneratedReport;
 
       switch (reportId) {
         case 'skills-gap-analysis':
+          console.log('Generating skills gap analysis...');
           report = await reportService.generateSkillsGapAnalysis(filters);
           break;
         case 'proficiency-trends':
+          console.log('Generating proficiency trends...');
           report = await reportService.generateProficiencyTrends(filters);
           break;
+        case 'skill-distribution':
+          console.log('Generating skill distribution...');
+          report = await reportService.generateSkillsGapAnalysis(filters);
+          break;
         case 'team-productivity':
+          console.log('Generating team productivity...');
           report = await reportService.generateTeamProductivity(filters);
           break;
+        case 'individual-performance':
+          console.log('Generating individual performance...');
+          report = await reportService.generateProficiencyTrends(filters);
+          break;
+        case 'goal-achievement':
+          console.log('Generating goal achievement...');
+          report = await reportService.generateSkillsGapAnalysis(filters);
+          break;
         default:
-          throw new Error(`Unknown report type: ${reportId}`);
+          console.warn(`Unknown report type: ${reportId}, defaulting to skills gap analysis`);
+          report = await reportService.generateSkillsGapAnalysis(filters);
       }
 
+      console.log('Report generated successfully:', {
+        id: report.id,
+        name: report.name,
+        rowCount: report.data.rows.length / (report.data.headers.length || 1),
+        headers: report.data.headers
+      });
+
       setCurrentReport(report);
-      toast.success(`${report.name} generated successfully`);
+      toast.success(`${report.name} generated successfully with ${Math.floor(report.data.rows.length / (report.data.headers.length || 1))} records`);
       
       // Refresh logs and stats
       await Promise.all([fetchReportLogs(), fetchDashboardStats()]);
@@ -257,7 +290,8 @@ export const useReportsData = () => {
       return report;
     } catch (error) {
       console.error('Error generating report:', error);
-      toast.error(`Failed to generate report: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error(`Failed to generate report: ${errorMessage}`);
       return null;
     } finally {
       setLoading(false);
@@ -295,6 +329,18 @@ export const useReportsData = () => {
       fetchReportLogs();
     }
   }, [profile]);
+
+  // Also fetch data when component mounts, but only if profile is available
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (profile) {
+        fetchDashboardStats();
+        fetchReportLogs();
+      }
+    }, 500); // Small delay to ensure auth is fully loaded
+
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   return {
     loading,

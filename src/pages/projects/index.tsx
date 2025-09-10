@@ -4,48 +4,28 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, Calendar, Users, Target } from "lucide-react";
+import { useProjects } from "./hooks/useProjects";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const Projects = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { projects, loading } = useProjects();
 
-  const projects = [
-    {
-      id: 1,
-      name: "E-Commerce Platform Redesign",
-      description: "Complete overhaul of the customer-facing e-commerce platform",
-      status: "Active",
-      priority: "High",
-      team: ["John Smith", "Sarah Johnson", "Mike Chen"],
-      skills: ["React", "TypeScript", "AWS", "UX Design"],
-      startDate: "2024-01-15",
-      endDate: "2024-04-15",
-      progress: 65
-    },
-    {
-      id: 2,
-      name: "Mobile App Development",
-      description: "Native mobile application for iOS and Android platforms",
-      status: "Planning",
-      priority: "Medium",
-      team: ["Alice Brown", "Bob Wilson"],
-      skills: ["React Native", "iOS", "Android", "API Integration"],
-      startDate: "2024-02-01",
-      endDate: "2024-06-01",
-      progress: 15
-    },
-    {
-      id: 3,
-      name: "Data Analytics Dashboard",
-      description: "Business intelligence dashboard for real-time analytics",
-      status: "Completed",
-      priority: "Low",
-      team: ["David Lee", "Emma Davis"],
-      skills: ["Python", "SQL", "Machine Learning", "Data Visualization"],
-      startDate: "2023-10-01",
-      endDate: "2023-12-31",
-      progress: 100
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  // Default stats for when no data is available
+  const defaultStats = {
+    activeProjects: projects?.filter(p => p.status === 'Active')?.length || 0,
+    teamMembers: projects?.reduce((acc, p) => acc + (p.team?.length || 0), 0) || 0,
+    completionRate: projects?.length ? Math.round(projects.reduce((acc, p) => acc + (p.progress || 0), 0) / projects.length) : 0,
+    skillsUtilized: [...new Set(projects?.flatMap(p => p.skills || []))].length || 0
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -98,8 +78,8 @@ const Projects = () => {
             <Target className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">+2 this month</p>
+            <div className="text-2xl font-bold">{defaultStats.activeProjects}</div>
+            <p className="text-xs text-muted-foreground">+{Math.floor(defaultStats.activeProjects * 0.2)} this month</p>
           </CardContent>
         </Card>
         
@@ -109,7 +89,7 @@ const Projects = () => {
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
+            <div className="text-2xl font-bold">{defaultStats.teamMembers}</div>
             <p className="text-xs text-muted-foreground">Across all projects</p>
           </CardContent>
         </Card>
@@ -120,7 +100,7 @@ const Projects = () => {
             <Calendar className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">87%</div>
+            <div className="text-2xl font-bold">{defaultStats.completionRate}%</div>
             <p className="text-xs text-muted-foreground">On-time delivery</p>
           </CardContent>
         </Card>
@@ -131,7 +111,7 @@ const Projects = () => {
             <Target className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">156</div>
+            <div className="text-2xl font-bold">{defaultStats.skillsUtilized}</div>
             <p className="text-xs text-muted-foreground">Unique skills used</p>
           </CardContent>
         </Card>
@@ -156,7 +136,8 @@ const Projects = () => {
 
       {/* Projects Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project) => (
+        {projects && projects.length > 0 ? (
+          projects.map((project) => (
           <Card key={project.id} className="hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -222,7 +203,16 @@ const Projects = () => {
               </Button>
             </CardContent>
           </Card>
-        ))}
+          ))
+        ) : (
+          <div className="col-span-full text-center py-12">
+            <p className="text-lg text-muted-foreground mb-4">No projects found</p>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Create First Project
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

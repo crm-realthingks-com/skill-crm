@@ -4,66 +4,30 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Clock, CheckCircle, XCircle, Search, Filter } from "lucide-react";
 import { useState } from "react";
+import { useApprovals } from "./hooks/useApprovals";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const Approvals = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { pendingApprovals, recentActions, loading } = useApprovals();
 
-  const pendingApprovals = [
-    {
-      id: 1,
-      type: "Skill Assessment",
-      requester: "John Smith",
-      title: "React Advanced Certification",
-      description: "Request to update skill level from Intermediate to Advanced",
-      priority: "High",
-      submitDate: "2024-01-20",
-      dueDate: "2024-01-25"
-    },
-    {
-      id: 2,
-      type: "Training Request",
-      requester: "Sarah Johnson", 
-      title: "AWS Cloud Architecture Course",
-      description: "External training course approval needed",
-      priority: "Medium",
-      submitDate: "2024-01-19",
-      dueDate: "2024-01-28"
-    },
-    {
-      id: 3,
-      type: "Skill Addition",
-      requester: "Mike Chen",
-      title: "Add Machine Learning Skills",
-      description: "Request to add new skill category and assessment",
-      priority: "Low",
-      submitDate: "2024-01-18",
-      dueDate: "2024-01-30"
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
-  const recentActions = [
-    {
-      id: 1,
-      action: "Approved",
-      title: "Python Certification Request",
-      approver: "Admin User",
-      date: "2024-01-20"
-    },
-    {
-      id: 2,
-      action: "Rejected",
-      title: "Overtime Skills Assessment",
-      approver: "Manager User",
-      date: "2024-01-19"
-    },
-    {
-      id: 3,
-      action: "Approved",
-      title: "New Team Member Onboarding",
-      approver: "HR Manager",
-      date: "2024-01-18"
-    }
-  ];
+  // Calculate stats from data
+  const stats = {
+    pending: pendingApprovals?.length || 0,
+    highPriority: pendingApprovals?.filter(a => a.priority === 'High')?.length || 0,
+    approvedToday: recentActions?.filter(a => a.action === 'Approved' && new Date(a.date).toDateString() === new Date().toDateString())?.length || 0,
+    approvedChange: "+0 from yesterday",
+    avgResponseTime: "N/A",
+    responseImprovement: "No data"
+  };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -108,8 +72,8 @@ const Approvals = () => {
             <Clock className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">2 high priority</p>
+            <div className="text-2xl font-bold">{stats.pending}</div>
+            <p className="text-xs text-muted-foreground">{stats.highPriority} high priority</p>
           </CardContent>
         </Card>
         
@@ -119,8 +83,8 @@ const Approvals = () => {
             <CheckCircle className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">5</div>
-            <p className="text-xs text-muted-foreground">+2 from yesterday</p>
+            <div className="text-2xl font-bold">{stats.approvedToday}</div>
+            <p className="text-xs text-muted-foreground">{stats.approvedChange}</p>
           </CardContent>
         </Card>
         
@@ -130,8 +94,8 @@ const Approvals = () => {
             <XCircle className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2.5d</div>
-            <p className="text-xs text-muted-foreground">-0.5d improvement</p>
+            <div className="text-2xl font-bold">{stats.avgResponseTime}</div>
+            <p className="text-xs text-muted-foreground">{stats.responseImprovement}</p>
           </CardContent>
         </Card>
       </div>
@@ -164,29 +128,35 @@ const Approvals = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {pendingApprovals.map((approval) => (
-                <div key={approval.id} className="border rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="space-y-1">
-                      <p className="font-medium">{approval.title}</p>
-                      <p className="text-sm text-muted-foreground">{approval.description}</p>
+              {pendingApprovals && pendingApprovals.length > 0 ? (
+                pendingApprovals.map((approval) => (
+                  <div key={approval.id} className="border rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="space-y-1">
+                        <p className="font-medium">{approval.title}</p>
+                        <p className="text-sm text-muted-foreground">{approval.description}</p>
+                      </div>
+                      <Badge className={getPriorityColor(approval.priority)}>
+                        {approval.priority}
+                      </Badge>
                     </div>
-                    <Badge className={getPriorityColor(approval.priority)}>
-                      {approval.priority}
-                    </Badge>
+                    
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+                      <span>By: {approval.requester}</span>
+                      <span>Due: {approval.dueDate}</span>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button size="sm" className="flex-1">Approve</Button>
+                      <Button size="sm" variant="outline" className="flex-1">Reject</Button>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
-                    <span>By: {approval.requester}</span>
-                    <span>Due: {approval.dueDate}</span>
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button size="sm" className="flex-1">Approve</Button>
-                    <Button size="sm" variant="outline" className="flex-1">Reject</Button>
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-sm text-muted-foreground">No pending approvals</p>
                 </div>
-              ))}
+              )}
             </div>
           </CardContent>
         </Card>
@@ -201,19 +171,25 @@ const Approvals = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentActions.map((action) => (
-                <div key={action.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="space-y-1">
-                    <p className="font-medium text-sm">{action.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      By: {action.approver} • {action.date}
-                    </p>
+              {recentActions && recentActions.length > 0 ? (
+                recentActions.map((action) => (
+                  <div key={action.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="space-y-1">
+                      <p className="font-medium text-sm">{action.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        By: {action.approver} • {action.date}
+                      </p>
+                    </div>
+                    <Badge className={getActionColor(action.action)}>
+                      {action.action}
+                    </Badge>
                   </div>
-                  <Badge className={getActionColor(action.action)}>
-                    {action.action}
-                  </Badge>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-sm text-muted-foreground">No recent actions</p>
                 </div>
-              ))}
+              )}
             </div>
           </CardContent>
         </Card>

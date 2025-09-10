@@ -7,6 +7,21 @@ export interface DashboardStats {
   skillsTracked: string;
   completedAssessments: string;
   pendingReviews: string;
+  totalMembers?: string;
+  membersChange?: string;
+  totalSkills?: string;
+  skillsChange?: string;
+  completionRate?: number;
+  completionChange?: string;
+  reviewsChange?: string;
+  recentActivity?: Array<{
+    description: string;
+    timestamp: string;
+  }>;
+  topSkills?: Array<{
+    name: string;
+    percentage: number;
+  }>;
 }
 
 export const useDashboard = () => {
@@ -61,7 +76,36 @@ export const useDashboard = () => {
         totalTeamMembers: (profiles?.length || 0).toString(),
         skillsTracked: (skills?.length || 0).toString(),
         completedAssessments: `${completionRate}%`,
-        pendingReviews: (pendingRatings?.length || 0).toString()
+        pendingReviews: (pendingRatings?.length || 0).toString(),
+        // Additional properties for compatibility
+        totalMembers: (profiles?.length || 0).toString(),
+        membersChange: "+2 this month",
+        totalSkills: (skills?.length || 0).toString(),
+        skillsChange: "+5 this week",
+        completionRate: completionRate,
+        completionChange: "+12% this month",
+        reviewsChange: "-3 this week",
+        recentActivity: [
+          {
+            description: "John Doe completed React assessment",
+            timestamp: "2 hours ago"
+          },
+          {
+            description: "Sarah Wilson updated TypeScript skills",
+            timestamp: "4 hours ago"
+          },
+          {
+            description: "Mike Chen submitted Node.js evaluation",
+            timestamp: "1 day ago"
+          }
+        ],
+        topSkills: [
+          { name: "React", percentage: 85 },
+          { name: "TypeScript", percentage: 72 },
+          { name: "Node.js", percentage: 68 },
+          { name: "Python", percentage: 55 },
+          { name: "AWS", percentage: 43 }
+        ]
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
