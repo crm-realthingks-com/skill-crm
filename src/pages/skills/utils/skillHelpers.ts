@@ -58,6 +58,7 @@ export const calculateCategoryProgress = (
   let ratingCounts = { high: 0, medium: 0, low: 0 };
   let approvedCount = 0;
   let pendingCount = 0;
+  let rejectedCount = 0;
   
   categorySkills.forEach(skill => {
     // Get subskills for this skill
@@ -78,6 +79,12 @@ export const calculateCategoryProgress = (
           const pendingRating = userSkills.find(r => r.subskill_id === subskill.id && r.status === 'submitted');
           if (pendingRating) {
             pendingCount++;
+          } else {
+            // Check for rejected ratings
+            const rejectedRating = userSkills.find(r => r.subskill_id === subskill.id && r.status === 'rejected');
+            if (rejectedRating) {
+              rejectedCount++;
+            }
           }
         }
       });
@@ -95,6 +102,12 @@ export const calculateCategoryProgress = (
         const pendingRating = userSkills.find(r => r.skill_id === skill.id && !r.subskill_id && r.status === 'submitted');
         if (pendingRating) {
           pendingCount++;
+        } else {
+          // Check for rejected ratings
+          const rejectedRating = userSkills.find(r => r.skill_id === skill.id && !r.subskill_id && r.status === 'rejected');
+          if (rejectedRating) {
+            rejectedCount++;
+          }
         }
       }
     }
@@ -108,6 +121,7 @@ export const calculateCategoryProgress = (
     progressPercentage,
     ratingCounts,
     approvedCount,
-    pendingCount
+    pendingCount,
+    rejectedCount
   };
 };

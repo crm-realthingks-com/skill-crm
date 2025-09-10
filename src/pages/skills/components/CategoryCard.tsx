@@ -8,6 +8,7 @@ import { Edit, Trash2, TrendingUp, Users, Target, X, Settings } from "lucide-rea
 import { AddCategoryModal } from "./admin/AddCategoryModal";
 import { ApprovedRatingsModal } from "./ApprovedRatingsModal";
 import { PendingRatingsModal } from "./PendingRatingsModal";
+import { RejectedRatingsModal } from "./RejectedRatingsModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { SkillsService } from "../services/skills.service";
@@ -44,6 +45,7 @@ export const CategoryCard = ({
   const [showEditModal, setShowEditModal] = useState(false);
   const [showApprovedModal, setShowApprovedModal] = useState(false);
   const [showPendingModal, setShowPendingModal] = useState(false);
+  const [showRejectedModal, setShowRejectedModal] = useState(false);
   const [selectedRatingFilter, setSelectedRatingFilter] = useState<'high' | 'medium' | 'low' | undefined>();
   const { toast } = useToast();
 
@@ -58,7 +60,8 @@ export const CategoryCard = ({
     progressPercentage, 
     ratingCounts, 
     approvedCount, 
-    pendingCount 
+    pendingCount,
+    rejectedCount 
   } = progressData;
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -116,6 +119,12 @@ export const CategoryCard = ({
     e.stopPropagation();
     setSelectedRatingFilter(undefined);
     setShowApprovedModal(true);
+  };
+
+  const handleRejectedClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowRejectedModal(true);
   };
 
   const handlePendingClick = (e: React.MouseEvent) => {
@@ -300,6 +309,18 @@ export const CategoryCard = ({
                     {pendingCount} Pending
                   </button>
                 )}
+                {rejectedCount > 0 && (
+                  <button
+                    onClick={(e) => {
+                      console.log('Rejected badge clicked');
+                      handleRejectedClick(e);
+                    }}
+                    className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold transition-colors cursor-pointer hover:bg-red-500/20 bg-red-500/10 text-red-600 border-red-500/20"
+                    type="button"
+                  >
+                    {rejectedCount} Rejected
+                  </button>
+                )}
               </div>
               <Button
                 variant="ghost"
@@ -352,6 +373,17 @@ export const CategoryCard = ({
       <PendingRatingsModal
         open={showPendingModal}
         onOpenChange={setShowPendingModal}
+        categoryName={category.name}
+        ratings={userSkills}
+        skills={skills.filter(skill => skill.category_id === category.id)}
+        subskills={subskills.filter(subskill => 
+          skills.some(skill => skill.id === subskill.skill_id && skill.category_id === category.id)
+        )}
+      />
+
+      <RejectedRatingsModal
+        open={showRejectedModal}
+        onOpenChange={setShowRejectedModal}
         categoryName={category.name}
         ratings={userSkills}
         skills={skills.filter(skill => skill.category_id === category.id)}
