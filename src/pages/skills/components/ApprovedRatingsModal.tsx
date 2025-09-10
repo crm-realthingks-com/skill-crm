@@ -24,9 +24,15 @@ export const ApprovedRatingsModal = ({
   subskills = [],
   filterRating
 }: ApprovedRatingsModalProps) => {
+  // Filter ratings to only include those from skills in this specific category
+  const categorySkillIds = skills.map(skill => skill.id);
+  const categoryRatings = ratings.filter(rating => 
+    categorySkillIds.includes(rating.skill_id)
+  );
+
   const filteredRatings = filterRating 
-    ? ratings.filter(rating => rating.status === 'approved' && rating.rating === filterRating)
-    : ratings.filter(rating => rating.status === 'approved');
+    ? categoryRatings.filter(rating => rating.status === 'approved' && rating.rating === filterRating)
+    : categoryRatings.filter(rating => rating.status === 'approved');
 
   const getRatingIcon = (rating: string) => {
     switch (rating) {

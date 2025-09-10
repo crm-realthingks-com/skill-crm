@@ -22,7 +22,13 @@ export const PendingRatingsModal = ({
   skills,
   subskills = []
 }: PendingRatingsModalProps) => {
-  const pendingRatings = ratings.filter(rating => rating.status === 'submitted');
+  // Filter ratings to only include those from skills in this specific category
+  const categorySkillIds = skills.map(skill => skill.id);
+  const categoryRatings = ratings.filter(rating => 
+    categorySkillIds.includes(rating.skill_id)
+  );
+
+  const pendingRatings = categoryRatings.filter(rating => rating.status === 'submitted');
 
   const getRatingIcon = (rating: string) => {
     switch (rating) {

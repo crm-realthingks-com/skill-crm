@@ -342,8 +342,10 @@ export const CategoryCard = ({
         onOpenChange={setShowApprovedModal}
         categoryName={category.name}
         ratings={userSkills}
-        skills={skills}
-        subskills={subskills}
+        skills={skills.filter(skill => skill.category_id === category.id)}
+        subskills={subskills.filter(subskill => 
+          skills.some(skill => skill.id === subskill.skill_id && skill.category_id === category.id)
+        )}
         filterRating={selectedRatingFilter}
       />
 
@@ -352,8 +354,10 @@ export const CategoryCard = ({
         onOpenChange={setShowPendingModal}
         categoryName={category.name}
         ratings={userSkills}
-        skills={skills}
-        subskills={subskills}
+        skills={skills.filter(skill => skill.category_id === category.id)}
+        subskills={subskills.filter(subskill => 
+          skills.some(skill => skill.id === subskill.skill_id && skill.category_id === category.id)
+        )}
       />
     </>
   );
