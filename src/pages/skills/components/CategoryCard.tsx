@@ -157,7 +157,7 @@ export const CategoryCard = ({
         className="group"
       >
         <Card 
-          className="relative h-full w-full border-0 bg-gradient-to-br from-card via-card to-card/90 hover:shadow-2xl transition-all duration-300 overflow-hidden"
+          className="relative h-80 w-full border-0 bg-gradient-to-br from-card via-card to-card/90 hover:shadow-2xl transition-all duration-300 overflow-hidden"
         >
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -220,7 +220,7 @@ export const CategoryCard = ({
           <CardHeader className="pb-3">
             <div className="space-y-2">
               <motion.h3 
-                className="text-2xl font-bold text-primary transition-colors duration-200 line-clamp-2"
+                className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-2"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
@@ -228,7 +228,7 @@ export const CategoryCard = ({
               </motion.h3>
               
               {category.description && (
-                <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                   {category.description}
                 </p>
               )}
@@ -237,20 +237,20 @@ export const CategoryCard = ({
 
           <CardContent className="space-y-4 pt-0 relative z-10">
             {/* Statistics Grid */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={(e) => {
                   console.log('High button clicked');
                   handleRatingClick('high', e);
                 }}
-                className="text-center p-3 bg-green-50 rounded-xl border border-green-200 hover:bg-green-100 transition-colors cursor-pointer relative z-20"
+                className="text-center p-2 bg-background/50 rounded-lg border border-border/50 hover:bg-background/80 transition-colors cursor-pointer relative z-20"
                 type="button"
               >
-                <div className="flex items-center justify-center mb-2">
-                  <Target className="h-5 w-5 text-green-600" />
+                <div className="flex items-center justify-center mb-1">
+                  <Target className="h-3 w-3 text-green-500" />
                 </div>
-                <div className="text-lg font-bold text-green-700">{ratingCounts.high}</div>
-                <div className="text-sm font-medium text-green-600">High</div>
+                <div className="text-xs font-semibold text-foreground">{ratingCounts.high}</div>
+                <div className="text-xs text-muted-foreground">High</div>
               </button>
               
               <button
@@ -258,14 +258,14 @@ export const CategoryCard = ({
                   console.log('Medium button clicked');
                   handleRatingClick('medium', e);
                 }}
-                className="text-center p-3 bg-yellow-50 rounded-xl border border-yellow-200 hover:bg-yellow-100 transition-colors cursor-pointer relative z-20"
+                className="text-center p-2 bg-background/50 rounded-lg border border-border/50 hover:bg-background/80 transition-colors cursor-pointer relative z-20"
                 type="button"
               >
-                <div className="flex items-center justify-center mb-2">
-                  <TrendingUp className="h-5 w-5 text-yellow-600" />
+                <div className="flex items-center justify-center mb-1">
+                  <TrendingUp className="h-3 w-3 text-yellow-500" />
                 </div>
-                <div className="text-lg font-bold text-yellow-700">{ratingCounts.medium}</div>
-                <div className="text-sm font-medium text-yellow-600">Medium</div>
+                <div className="text-xs font-semibold text-foreground">{ratingCounts.medium}</div>
+                <div className="text-xs text-muted-foreground">Medium</div>
               </button>
               
               <button
@@ -273,26 +273,26 @@ export const CategoryCard = ({
                   console.log('Low button clicked');
                   handleRatingClick('low', e);
                 }}
-                className="text-center p-3 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer relative z-20"
+                className="text-center p-2 bg-background/50 rounded-lg border border-border/50 hover:bg-background/80 transition-colors cursor-pointer relative z-20"
                 type="button"
               >
-                <div className="flex items-center justify-center mb-2">
-                  <Users className="h-5 w-5 text-blue-600" />
+                <div className="flex items-center justify-center mb-1">
+                  <Users className="h-3 w-3 text-blue-500" />
                 </div>
-                <div className="text-lg font-bold text-blue-700">{ratingCounts.low}</div>
-                <div className="text-sm font-medium text-blue-600">Low</div>
+                <div className="text-xs font-semibold text-foreground">{ratingCounts.low}</div>
+                <div className="text-xs text-muted-foreground">Low</div>
               </button>
             </div>
 
             {/* Status Information and Update Button */}
-            <div className="flex items-center justify-between relative z-20 mt-4">
-              <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center justify-between text-xs relative z-20">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={(e) => {
                     console.log('Approved badge clicked');
                     handleApprovedClick(e);
                   }}
-                  className="inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold transition-colors cursor-pointer hover:bg-background/80 border-border bg-background text-foreground"
+                  className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold transition-colors cursor-pointer hover:bg-background/80 border-border bg-background text-foreground"
                   type="button"
                 >
                   {approvedCount} Approved
@@ -303,7 +303,7 @@ export const CategoryCard = ({
                       console.log('Pending badge clicked');
                       handlePendingClick(e);
                     }}
-                    className="inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold transition-colors cursor-pointer hover:bg-yellow-500/20 bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+                    className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold transition-colors cursor-pointer hover:bg-yellow-500/20 bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
                     type="button"
                   >
                     {pendingCount} Pending
@@ -315,7 +315,7 @@ export const CategoryCard = ({
                       console.log('Rejected badge clicked');
                       handleRejectedClick(e);
                     }}
-                    className="inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold transition-colors cursor-pointer hover:bg-red-500/20 bg-red-500/10 text-red-600 border-red-500/20"
+                    className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold transition-colors cursor-pointer hover:bg-red-500/20 bg-red-500/10 text-red-600 border-red-500/20"
                     type="button"
                   >
                     {rejectedCount} Rejected
@@ -323,16 +323,16 @@ export const CategoryCard = ({
                 )}
               </div>
               <Button
-                variant="default"
-                size="default"
+                variant="ghost"
+                size="sm"
                 onClick={(e) => {
                   console.log('Update button clicked');
                   handleUpdateClick(e);
                 }}
-                className="h-10 px-4 text-sm font-medium hover:bg-primary/90 relative z-30"
+                className="h-6 px-2 text-xs hover:bg-primary/10 relative z-30"
                 type="button"
               >
-                <Settings className="h-4 w-4 mr-2" />
+                <Settings className="h-3 w-3 mr-1" />
                 Update
               </Button>
             </div>
