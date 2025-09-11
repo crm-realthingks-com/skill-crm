@@ -157,7 +157,7 @@ export const CategoryCard = ({
         className="group"
       >
         <Card 
-          className="relative h-full w-full border border-border/20 bg-gradient-to-br from-card to-muted/20 hover:shadow-lg transition-all duration-300 overflow-hidden rounded-xl"
+          className="relative h-full w-full min-h-0 border border-border/20 bg-gradient-to-br from-card to-muted/20 hover:shadow-lg transition-all duration-300 overflow-hidden rounded-xl flex flex-col"
         >
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -217,10 +217,10 @@ export const CategoryCard = ({
             )}
           </div>
 
-          <CardHeader className="pb-2 px-4 pt-4">
+          <CardHeader className="pb-2 px-4 pt-4 flex-shrink-0">
             <div className="space-y-1">
               <motion.h3 
-                className="text-lg font-bold text-primary line-clamp-2 leading-tight"
+                className="text-base font-bold text-primary line-clamp-1 leading-tight"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
@@ -228,28 +228,28 @@ export const CategoryCard = ({
               </motion.h3>
               
               {category.description && (
-                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                <p className="text-xs text-muted-foreground line-clamp-1 leading-relaxed">
                   {category.description}
                 </p>
               )}
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-3 pt-0 px-4 pb-4 relative z-10 flex flex-col h-full">
+          <CardContent className="px-4 pb-4 relative z-10 flex flex-col flex-1 min-h-0">
             {/* Statistics Grid */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1 mb-3">
               <button
                 onClick={(e) => {
                   console.log('High button clicked');
                   handleRatingClick('high', e);
                 }}
-                className="text-center p-3 bg-success/10 rounded-xl border border-success/20 hover:bg-success/20 transition-colors cursor-pointer relative z-20"
+                className="text-center p-2 bg-success/10 rounded-lg border border-success/20 hover:bg-success/20 transition-colors cursor-pointer relative z-20"
                 type="button"
               >
                 <div className="flex items-center justify-center mb-1">
-                  <Target className="h-4 w-4 text-success" />
+                  <Target className="h-3 w-3 text-success" />
                 </div>
-                <div className="text-sm font-bold text-success">{ratingCounts.high}</div>
+                <div className="text-xs font-bold text-success">{ratingCounts.high}</div>
                 <div className="text-xs text-success/80 font-medium">High</div>
               </button>
               
@@ -258,13 +258,13 @@ export const CategoryCard = ({
                   console.log('Medium button clicked');
                   handleRatingClick('medium', e);
                 }}
-                className="text-center p-3 bg-warning/10 rounded-xl border border-warning/20 hover:bg-warning/20 transition-colors cursor-pointer relative z-20"
+                className="text-center p-2 bg-warning/10 rounded-lg border border-warning/20 hover:bg-warning/20 transition-colors cursor-pointer relative z-20"
                 type="button"
               >
                 <div className="flex items-center justify-center mb-1">
-                  <TrendingUp className="h-4 w-4 text-warning" />
+                  <TrendingUp className="h-3 w-3 text-warning" />
                 </div>
-                <div className="text-sm font-bold text-warning">{ratingCounts.medium}</div>
+                <div className="text-xs font-bold text-warning">{ratingCounts.medium}</div>
                 <div className="text-xs text-warning/80 font-medium">Medium</div>
               </button>
               
@@ -273,27 +273,27 @@ export const CategoryCard = ({
                   console.log('Low button clicked');
                   handleRatingClick('low', e);
                 }}
-                className="text-center p-3 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer relative z-20"
+                className="text-center p-2 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer relative z-20"
                 type="button"
               >
                 <div className="flex items-center justify-center mb-1">
-                  <Users className="h-4 w-4 text-blue-600" />
+                  <Users className="h-3 w-3 text-blue-600" />
                 </div>
-                <div className="text-sm font-bold text-blue-600">{ratingCounts.low}</div>
+                <div className="text-xs font-bold text-blue-600">{ratingCounts.low}</div>
                 <div className="text-xs text-blue-600/80 font-medium">Low</div>
               </button>
             </div>
 
             {/* Footer with Status Pills and Update Button */}
-            <div className="mt-auto pt-2">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex flex-wrap items-center gap-1">
+            <div className="mt-auto pt-2 flex-shrink-0">
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap items-center gap-1 justify-center">
                   <button
                     onClick={(e) => {
                       console.log('Approved badge clicked');
                       handleApprovedClick(e);
                     }}
-                    className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-semibold transition-colors cursor-pointer hover:bg-muted/80 border-border bg-muted text-primary"
+                    className="inline-flex items-center rounded-full border px-2 py-1 text-xs font-semibold transition-colors cursor-pointer hover:bg-muted/80 border-border bg-muted text-primary"
                     type="button"
                   >
                     {approvedCount} Approved
@@ -304,7 +304,7 @@ export const CategoryCard = ({
                         console.log('Pending badge clicked');
                         handlePendingClick(e);
                       }}
-                      className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-semibold transition-colors cursor-pointer hover:bg-warning/20 bg-warning/10 text-warning border-warning/20"
+                      className="inline-flex items-center rounded-full border px-2 py-1 text-xs font-semibold transition-colors cursor-pointer hover:bg-warning/20 bg-warning/10 text-warning border-warning/20"
                       type="button"
                     >
                       {pendingCount} Pending
@@ -316,7 +316,7 @@ export const CategoryCard = ({
                         console.log('Rejected badge clicked');
                         handleRejectedClick(e);
                       }}
-                      className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-semibold transition-colors cursor-pointer hover:bg-destructive/20 bg-destructive/10 text-destructive border-destructive/20"
+                      className="inline-flex items-center rounded-full border px-2 py-1 text-xs font-semibold transition-colors cursor-pointer hover:bg-destructive/20 bg-destructive/10 text-destructive border-destructive/20"
                       type="button"
                     >
                       {rejectedCount} Rejected
@@ -330,10 +330,10 @@ export const CategoryCard = ({
                     console.log('Update button clicked');
                     handleUpdateClick(e);
                   }}
-                  className="h-8 px-4 text-sm hover:bg-primary/90 relative z-30 shrink-0"
+                  className="h-7 px-3 text-xs hover:bg-primary/90 relative z-30 w-full"
                   type="button"
                 >
-                  <Settings className="h-4 w-4 mr-2" />
+                  <Settings className="h-3 w-3 mr-1" />
                   Update
                 </Button>
               </div>
