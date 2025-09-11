@@ -198,10 +198,9 @@ const Skills = () => {
             /* Fixed 3x3 Grid */
             <div className="h-full p-2">
               <motion.div 
-                className="grid grid-cols-3 grid-rows-3 gap-1 w-full h-full"
+                className="grid grid-cols-3 gap-1 w-full h-full"
                 style={{
-                  minHeight: 'calc(100vh - 120px)',
-                  maxHeight: 'calc(100vh - 120px)'
+                  gridTemplateRows: 'repeat(3, 1fr)'
                 }}
                 layout
               >
