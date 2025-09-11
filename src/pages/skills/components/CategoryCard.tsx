@@ -286,8 +286,8 @@ export const CategoryCard = ({
 
             {/* Footer with Status Pills and Update Button */}
             <div className="mt-auto pt-2 flex-shrink-0">
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-wrap items-center gap-1 justify-center">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center gap-1">
                   <button
                     onClick={(e) => {
                       console.log('Approved badge clicked');
@@ -330,7 +330,7 @@ export const CategoryCard = ({
                     console.log('Update button clicked');
                     handleUpdateClick(e);
                   }}
-                  className="h-7 px-3 text-xs hover:bg-primary/90 relative z-30 w-full"
+                  className="h-7 px-3 text-xs hover:bg-primary/90 relative z-30"
                   type="button"
                 >
                   <Settings className="h-3 w-3 mr-1" />
