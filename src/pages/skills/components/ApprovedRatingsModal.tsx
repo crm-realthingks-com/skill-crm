@@ -2,7 +2,7 @@ import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Target, TrendingUp, Users } from "lucide-react";
+import { TrendingUp, Minus, TrendingDown } from "lucide-react";
 import type { EmployeeRating, Skill } from "@/types/database";
 
 interface ApprovedRatingsModalProps {
@@ -37,11 +37,11 @@ export const ApprovedRatingsModal = ({
   const getRatingIcon = (rating: string) => {
     switch (rating) {
       case 'high':
-        return <Target className="h-4 w-4 text-green-500" />;
+        return <TrendingUp className="h-4 w-4 text-emerald-600" />;
       case 'medium':
-        return <TrendingUp className="h-4 w-4 text-yellow-500" />;
+        return <Minus className="h-4 w-4 text-amber-600" />;
       case 'low':
-        return <Users className="h-4 w-4 text-blue-500" />;
+        return <TrendingDown className="h-4 w-4 text-slate-600" />;
       default:
         return null;
     }
