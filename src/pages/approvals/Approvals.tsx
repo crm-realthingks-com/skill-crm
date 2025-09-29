@@ -57,8 +57,8 @@ const Approvals = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col h-screen space-y-6 p-6">
+      <div className="flex items-center justify-between flex-shrink-0">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Approvals</h1>
           <p className="text-muted-foreground">
@@ -68,7 +68,7 @@ const Approvals = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3 flex-shrink-0">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending Approvals</CardTitle>
@@ -104,7 +104,7 @@ const Approvals = () => {
       </div>
 
       {/* Search and Filter */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 flex-shrink-0">
         <div className="relative flex-1">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -120,99 +120,70 @@ const Approvals = () => {
         </Button>
       </div>
 
-      {/* Pending Approvals - Full Width */}
-      <div className="w-full">
-        <Card className="w-full">
-          <CardHeader>
+      {/* Pending Approvals - Full Height */}
+      <div className="flex-1 flex flex-col min-h-0">
+        <Card className="flex-1 flex flex-col">
+          <CardHeader className="flex-shrink-0">
             <CardTitle>Pending Approvals</CardTitle>
             <CardDescription>
               Items awaiting your review and approval
             </CardDescription>
           </CardHeader>
-          <CardContent className="w-full">
-            <div className="space-y-4 w-full">
+          <CardContent className="flex-1 flex flex-col min-h-0">
+            <div className="flex-1 overflow-auto">
               {pendingApprovals && pendingApprovals.length > 0 ? (
-                pendingApprovals.map((approval) => (
-                  <Collapsible
-                    key={approval.id}
-                    open={expandedApproval === approval.id}
-                    onOpenChange={(open) => setExpandedApproval(open ? approval.id : null)}
-                    className="w-full"
-                  >
-                    <div className="border rounded-lg overflow-hidden w-full">
-                      <CollapsibleTrigger className="w-full p-4 hover:bg-muted/50 transition-colors text-left">
-                        <div className="flex items-start justify-between w-full">
-                          <div className="space-y-1 flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <p className="font-medium">{approval.title}</p>
-                              <Badge className={getPriorityColor(approval.priority)}>
-                                {approval.priority}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground">{approval.description}</p>
-                          </div>
-                          <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-                            <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
-                          </div>
-                        </div>
-                      </CollapsibleTrigger>
-                      
-                      <CollapsibleContent className="border-t bg-muted/20 w-full">
-                        <div className="p-4 space-y-4 w-full">
-                          {/* Employee Comment */}
-                          {approval.self_comment && (
-                            <div className="p-3 bg-background rounded border w-full">
-                              <p className="text-sm font-medium mb-1">Employee Comment:</p>
-                              <p className="text-sm text-muted-foreground">{approval.self_comment}</p>
-                            </div>
-                          )}
-                          
-                          {/* Request Details */}
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm w-full">
-                            <div className="flex items-center gap-2">
-                              <User className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-muted-foreground">Requester:</span>
-                              <span className="font-medium">{approval.requester}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-muted-foreground">Submitted:</span>
-                              <span className="font-medium">{approval.submitDate}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Clock className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-muted-foreground">Due:</span>
-                              <span className="font-medium">{approval.dueDate}</span>
-                            </div>
-                          </div>
-                          
-                          {/* Action Buttons */}
-                          <div className="flex gap-2 pt-2">
-                            <Button 
-                              size="sm"
-                              onClick={() => handleApproveRating(approval.id)}
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                            >
-                              <Check className="mr-2 h-4 w-4" />
-                              Approve
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => handleRejectRating(approval.id, "Rejected from dropdown")}
-                              className="border-red-200 text-red-600 hover:bg-red-50"
-                            >
-                              <X className="mr-2 h-4 w-4" />
-                              Reject
-                            </Button>
-                          </div>
-                        </div>
-                      </CollapsibleContent>
+                <div className="space-y-3">
+                  {/* Header Row */}
+                  <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border text-sm font-medium">
+                    <div className="flex items-center gap-4 flex-1">
+                      <span>AI User</span>
+                      <span className="text-muted-foreground">|</span>
+                      <span>4 Ratings</span>
+                      <span className="text-muted-foreground">|</span>
+                      <span>ai@realthingks.com</span>
+                      <span className="text-muted-foreground">|</span>
+                      <span>Submitted: 9/12/2025</span>
                     </div>
-                  </Collapsible>
-                ))
+                    <Button size="sm" variant="outline">Review</Button>
+                  </div>
+                  
+                  {/* Approval Items */}
+                  {pendingApprovals.map((approval) => (
+                    <div key={approval.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/20 transition-colors">
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <span className="font-medium text-sm">{approval.title}</span>
+                        <span className="text-muted-foreground">|</span>
+                        <span className="text-sm text-muted-foreground">
+                          Employee comment: {approval.self_comment || 'No comment'}
+                        </span>
+                        <Badge className={getPriorityColor(approval.priority)} variant="secondary">
+                          {approval.priority}
+                        </Badge>
+                      </div>
+                      <div className="flex gap-2 flex-shrink-0 ml-4">
+                        <Button 
+                          size="sm"
+                          onClick={() => handleApproveRating(approval.id)}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          <Check className="mr-1 h-3 w-3" />
+                          Approve
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleRejectRating(approval.id, "Rejected from inline")}
+                          className="border-red-200 text-red-600 hover:bg-red-50"
+                        >
+                          <X className="mr-1 h-3 w-3" />
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <div className="text-center py-8">
+                <div className="flex items-center justify-center h-full">
                   <p className="text-sm text-muted-foreground">No pending approvals</p>
                 </div>
               )}
