@@ -121,43 +121,43 @@ const Approvals = () => {
       </div>
 
       {/* Pending Approvals - Full Height */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col">
         <Card className="flex-1 flex flex-col">
-          <CardHeader className="flex-shrink-0 pb-4">
+          <CardHeader className="flex-shrink-0 pb-3">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-orange-600" />
               <CardTitle>Pending Approvals</CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col min-h-0 pt-0">
-            <div className="flex-1 overflow-auto space-y-2">
-              {pendingApprovals && pendingApprovals.length > 0 ? (
-                <>
-                  {/* Header Row */}
-                  <div className="flex items-center justify-between p-3 bg-muted/30 rounded text-sm font-medium border-b">
-                    <div className="flex items-center gap-4">
-                      <span>AI User</span>
-                      <span className="text-muted-foreground">|</span>
-                      <span>4 Ratings</span>
-                      <span className="text-muted-foreground">|</span>
-                      <span>ai@realthingks.com</span>
-                      <span className="text-muted-foreground">|</span>
-                      <span>Submitted: 9/12/2025</span>
-                    </div>
-                    <Button size="sm" variant="outline">Review</Button>
+          <CardContent className="flex-1 flex flex-col p-0">
+            {pendingApprovals && pendingApprovals.length > 0 ? (
+              <div className="flex-1 flex flex-col">
+                {/* Header Row */}
+                <div className="flex items-center justify-between px-4 py-3 bg-muted/30 text-sm font-medium border-b">
+                  <div className="flex items-center gap-4">
+                    <span>AI User</span>
+                    <span className="text-muted-foreground">|</span>
+                    <span>4 Ratings</span>
+                    <span className="text-muted-foreground">|</span>
+                    <span>ai@realthingks.com</span>
+                    <span className="text-muted-foreground">|</span>
+                    <span>Submitted: 9/12/2025</span>
                   </div>
-                  
-                  {/* Approval Items - Inline Format */}
+                  <Button size="sm" variant="outline">Review</Button>
+                </div>
+                
+                {/* Approval Items - Inline Format */}
+                <div className="flex-1 overflow-auto">
                   {pendingApprovals.map((approval) => (
-                    <div key={approval.id} className="flex items-center justify-between p-3 hover:bg-muted/20 transition-colors border-b last:border-b-0">
-                      <div className="flex items-center gap-4 flex-1">
-                        <span className="font-medium">{approval.title}</span>
+                    <div key={approval.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/20 transition-colors border-b last:border-b-0">
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <span className="font-medium whitespace-nowrap">{approval.title}</span>
                         <span className="text-muted-foreground">|</span>
-                        <span className="text-muted-foreground">
+                        <span className="text-muted-foreground truncate">
                           Employee comment: {approval.self_comment || 'No comment'}
                         </span>
                       </div>
-                      <div className="flex gap-2 ml-4">
+                      <div className="flex gap-2 ml-4 flex-shrink-0">
                         <Button 
                           size="sm"
                           onClick={() => handleApproveRating(approval.id)}
@@ -176,13 +176,13 @@ const Approvals = () => {
                       </div>
                     </div>
                   ))}
-                </>
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-muted-foreground">No pending approvals</p>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <p className="text-muted-foreground">No pending approvals</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
